@@ -1,16 +1,16 @@
 package com.hobos.freeter.member;
 
+import lombok.RequiredArgsConstructor;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.stereotype.Service;
 
 @Service
+@RequiredArgsConstructor
 public class SignupService {
     private final MemberRepository memberRepository;
 
-    public SignupService(MemberRepository memberRepository) {
-        this.memberRepository = memberRepository;
-    }
-
-    void signup(SignupDTO dto) {
+    public void signup(SignupDTO dto) {
 
         Member member = new Member();
 
@@ -20,19 +20,5 @@ public class SignupService {
         memberRepository.save(member);
     }
 
-    void login(LoginDTO dto) {
 
-        Member member = memberRepository.findByProviderId(dto.getProviderId());
-
-        if (member == null) {
-            throw new RuntimeException("존재하지 않는 회원입니다.");
-        }
-
-        // TODO: 로그인처리
-        member.login(dto);
-
-        memberRepository.save(member);
-
-
-    }
 }
