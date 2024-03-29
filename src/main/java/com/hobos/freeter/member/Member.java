@@ -1,6 +1,5 @@
 package com.hobos.freeter.member;
 
-import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
@@ -26,7 +25,6 @@ public class Member implements UserDetails {
 
     @Id
     @GeneratedValue()
-
     private Long userId;
 
     private String providerId;
@@ -34,7 +32,6 @@ public class Member implements UserDetails {
     private Provider provider;
 
     @CreationTimestamp
-    @Column(nullable = false, updatable = false)
     private LocalDateTime createdAt;
 
     @UpdateTimestamp
@@ -89,7 +86,7 @@ public class Member implements UserDetails {
         GOOGLE,
         KAKAO,
         NAVER,
-        LOCAL;
+        LOCAL,
     }
 
     public void signup(SignupDTO dto) {
