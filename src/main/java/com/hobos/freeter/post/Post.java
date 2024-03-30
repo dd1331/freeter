@@ -1,14 +1,13 @@
 package com.hobos.freeter.post;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 //@Data
 @Builder
@@ -38,6 +37,18 @@ public class Post {
 
     @Column()
     private LocalDateTime deletedAt;
+
+    @OneToMany(mappedBy = "post", cascade = CascadeType.ALL)
+    @Builder.Default
+    private List<PostCategory> postCategories = new ArrayList<>();
+
+
+    void addCategory(Category category) {
+
+        PostCategory postCategory = PostCategory.builder().post(this).category(category).build();
+        postCategories.add(postCategory);
+
+    }
 
     Post update(UpdatePostDto dto) {
 

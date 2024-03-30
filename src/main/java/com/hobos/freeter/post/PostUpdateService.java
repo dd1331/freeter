@@ -13,6 +13,8 @@ public class PostUpdateService {
 
         Post post = postRepository.findOneById(dto.getPostId());
 
+        if (post == null) throw new PostNotFoundException();
+
         Post updated = post.update(dto);
 
         postRepository.save(updated);

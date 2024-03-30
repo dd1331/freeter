@@ -10,5 +10,7 @@ public class PostCreateRequest {
     private String content;
     private Long posterId;
 
+    private Long categoryId;
+
 
 }

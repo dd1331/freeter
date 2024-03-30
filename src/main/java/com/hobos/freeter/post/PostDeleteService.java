@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -13,7 +14,9 @@ public class PostDeleteService {
 
     Post delete(Long postId) {
 
-        Post post = postRepository.findById(postId).orElseThrow();
+        Post post = postRepository.findOneById(postId);
+
+        if (post == null) throw new PostNotFoundException();
 
         post.setDeletedAt(LocalDateTime.now());
 

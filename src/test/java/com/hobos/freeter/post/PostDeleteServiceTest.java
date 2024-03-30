@@ -3,6 +3,7 @@ package com.hobos.freeter.post;
 import com.hobos.freeter.member.Member;
 import com.hobos.freeter.member.SignupDTO;
 import com.hobos.freeter.member.SignupService;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -45,6 +46,11 @@ class PostDeleteServiceTest {
 
         assertNotNull(deleted.getDeletedAt());
 
+    }
 
+    @Test()
+    @DisplayName("없는 포스트")
+    void notFound() {
+        assertThrows(PostNotFoundException.class, () -> postDeleteService.delete(1L));
     }
 }
