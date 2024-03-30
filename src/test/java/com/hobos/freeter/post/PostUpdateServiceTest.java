@@ -29,7 +29,7 @@ class PostUpdateServiceTest {
 
         PostCreateRequest request = PostCreateRequest.builder().title("title").content("content").build();
 
-        Post post = postCreateService.create(member.getUserId(), request);
+        Post post = postCreateService.create(member.getMemberId(), request);
 
         UpdatePostDto updateDto = UpdatePostDto.builder().postId(post.getId()).title("updated title").content("updated content").build();
         Post updated = postUpdateService.update(updateDto);

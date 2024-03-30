@@ -25,7 +25,7 @@ public class Member implements UserDetails {
 
     @Id
     @GeneratedValue()
-    private Long userId;
+    private Long memberId;
 
     private String providerId;
 
@@ -57,7 +57,7 @@ public class Member implements UserDetails {
 
     @Override
     public String getUsername() {
-        return String.valueOf(this.userId);
+        return String.valueOf(this.memberId);
     }
 
     @Override

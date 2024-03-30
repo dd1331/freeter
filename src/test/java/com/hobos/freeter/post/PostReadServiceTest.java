@@ -15,8 +15,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 
-import java.util.List;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
@@ -53,7 +51,7 @@ class PostReadServiceTest {
 
         PostCreateRequest request = PostCreateRequest.builder().title("title").content("content").build();
 
-        Post post = postCreateService.create(member.getUserId(), request);
+        Post post = postCreateService.create(member.getMemberId(), request);
 
         Post found = postReadService.getOne(post.getId());
         assertEquals(post, found);
@@ -78,8 +76,8 @@ class PostReadServiceTest {
 
         PostCreateRequest request = PostCreateRequest.builder().title("title").content("content").categoryId(categoryId).build();
 
-        postCreateService.create(member.getUserId(), request);
-        postCreateService.create(member.getUserId(), request);
+        postCreateService.create(member.getMemberId(), request);
+        postCreateService.create(member.getMemberId(), request);
 
         Pageable pageable = PageRequest.of(0, 5);
         PostListRequest listDto = PostListRequest.builder().categoryId(categoryId).build();
@@ -115,8 +113,8 @@ class PostReadServiceTest {
 
         PostCreateRequest request = PostCreateRequest.builder().title("title").content("content").categoryId(categoryId).build();
 
-        postCreateService.create(member.getUserId(), request);
-        postCreateService.create(member.getUserId(), request);
+        postCreateService.create(member.getMemberId(), request);
+        postCreateService.create(member.getMemberId(), request);
 
         Pageable pageable = PageRequest.of(0, 5);
         PostListRequest listDto = PostListRequest.builder().categoryId(categoryId).build();

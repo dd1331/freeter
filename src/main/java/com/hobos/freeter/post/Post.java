@@ -1,5 +1,6 @@
 package com.hobos.freeter.post;
 
+import com.hobos.freeter.comment.CommentEntity;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
@@ -14,7 +15,7 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-@Data
+@Getter
 public class Post {
     @Id
     @GeneratedValue()
@@ -43,6 +44,11 @@ public class Post {
     private List<PostCategory> postCategories = new ArrayList<>();
 
 
+    @OneToMany(mappedBy = "post", cascade = CascadeType.ALL)
+    @Builder.Default
+    private List<CommentEntity> comments = new ArrayList<>();
+
+
     void addCategory(Category category) {
 
         PostCategory postCategory = PostCategory.builder().post(this).category(category).build();
@@ -50,11 +56,20 @@ public class Post {
 
     }
 
+    public void addComment(CommentEntity comment) {
+        comments.add(comment);
+        comment.addToPost(this);
+    }
+
     Post update(UpdatePostDto dto) {
 
         this.content = null;
         this.title = null;
         return Post.builder().content(dto.getContent()).title(dto.getTitle()).build();
+    }
+
+    public void delete() {
+        this.deletedAt = LocalDateTime.now();
     }
 }
 

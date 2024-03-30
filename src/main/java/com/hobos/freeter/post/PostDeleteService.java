@@ -18,7 +18,7 @@ public class PostDeleteService {
 
         if (post == null) throw new PostNotFoundException();
 
-        post.setDeletedAt(LocalDateTime.now());
+        post.delete();
 
         postRepository.save(post);
 

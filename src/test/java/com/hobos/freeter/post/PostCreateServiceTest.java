@@ -49,10 +49,10 @@ class PostCreateServiceTest {
 
         PostCreateRequest request = PostCreateRequest.builder().title("title").content("content").categoryId(categories.getFirst().getId()).build();
 
-        Post post = postCreateService.create(member.getUserId(), request);
+        Post post = postCreateService.create(member.getMemberId(), request);
 
         assertEquals(categories.getFirst().getId(), post.getPostCategories().getFirst().getCategory().getId());
-        assertEquals(post.getPosterId(), member.getUserId());
+        assertEquals(post.getPosterId(), member.getMemberId());
     }
 }
 
