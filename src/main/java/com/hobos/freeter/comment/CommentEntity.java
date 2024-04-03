@@ -46,4 +46,8 @@ public class CommentEntity {
     public void addToPost(Post post) {
         this.post = post;
     }
+
+    public void update(String content) {
+        this.content = content;
+    }
 }

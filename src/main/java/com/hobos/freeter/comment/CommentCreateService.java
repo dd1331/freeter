@@ -32,7 +32,6 @@ public class CommentCreateService {
         // 4. 게시글 저장 (댓글은 CascadeType.ALL로 인해 자동으로 저장됨)
         postRepository.save(post);
 
-
-        return comment;
+        return post.getComments().getLast();
     }
 }
