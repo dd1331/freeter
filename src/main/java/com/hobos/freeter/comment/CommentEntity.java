@@ -12,6 +12,7 @@ import java.time.LocalDateTime;
 @Getter
 @Entity
 @Builder
+@ToString
 @NoArgsConstructor
 @AllArgsConstructor
 public class CommentEntity {
@@ -22,6 +23,9 @@ public class CommentEntity {
     @ManyToOne
     @JoinColumn(name = "commenter_id")
     private Member commenter;
+
+//    @Column(name = "post_id")
+//    private Long postId;
 
 
     @ManyToOne
