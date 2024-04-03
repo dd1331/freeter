@@ -51,7 +51,7 @@ class PostReadServiceTest {
 
         PostCreateRequest request = PostCreateRequest.builder().title("title").content("content").build();
 
-        Post post = postCreateService.create(member.getMemberId(), request);
+        Post post = postCreateService.create(member.getId(), request);
 
         Post found = postReadService.getOne(post.getId());
         assertEquals(post, found);
@@ -76,8 +76,8 @@ class PostReadServiceTest {
 
         PostCreateRequest request = PostCreateRequest.builder().title("title").content("content").categoryId(categoryId).build();
 
-        postCreateService.create(member.getMemberId(), request);
-        postCreateService.create(member.getMemberId(), request);
+        postCreateService.create(member.getId(), request);
+        postCreateService.create(member.getId(), request);
 
         Pageable pageable = PageRequest.of(0, 5);
         PostListRequest listDto = PostListRequest.builder().categoryId(categoryId).build();
@@ -113,8 +113,8 @@ class PostReadServiceTest {
 
         PostCreateRequest request = PostCreateRequest.builder().title("title").content("content").categoryId(categoryId).build();
 
-        postCreateService.create(member.getMemberId(), request);
-        postCreateService.create(member.getMemberId(), request);
+        postCreateService.create(member.getId(), request);
+        postCreateService.create(member.getId(), request);
 
         Pageable pageable = PageRequest.of(0, 5);
         PostListRequest listDto = PostListRequest.builder().categoryId(categoryId).build();

@@ -53,7 +53,7 @@ class CommentCreateServiceTest {
 
         PostCreateRequest request = PostCreateRequest.builder().title("title").content("content").categoryId(categoryId).build();
 
-        Post post = postCreateService.create(member.getMemberId(), request);
+        postCreateService.create(member.getId(), request);
     }
 
 
@@ -65,13 +65,13 @@ class CommentCreateServiceTest {
 
         Post post = postRepository.findAll().getFirst();
 
-        CommentEntity comment = commentCreateService.createComment(post.getId(), "content", member.getMemberId());
+        CommentEntity comment = commentCreateService.createComment(post.getId(), "content", member.getId());
 
 
         System.out.println(comment);
 
         assertEquals(comment.getContent(), "content");
-        assertEquals(comment.getCommenter().getMemberId(), member.getMemberId());
+        assertEquals(comment.getCommenter().getId(), member.getId());
         assertEquals(post.getId(), comment.getPost().getId());
 
     }

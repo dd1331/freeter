@@ -15,7 +15,7 @@ import java.util.NoSuchElementException;
 import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
-class CommentUpdateServiceTest {
+class CommentDeleteServiceTest {
 
     @PersistenceContext
     private EntityManager entityManager;
@@ -42,6 +42,9 @@ class CommentUpdateServiceTest {
     @Autowired
     private CommentUpdateService commentUpdateService;
 
+    @Autowired
+    private CommentDeleteService commentDeleteService;
+
     @BeforeEach
     public void beforeAll() {
         Category categoryA = Category.builder().name("aa").build();
@@ -62,34 +65,27 @@ class CommentUpdateServiceTest {
         postCreateService.create(member.getId(), request);
     }
 
+
     @Test
     @Transactional
-    void update() {
+    void delete() {
         Member member = memberRepository.findAll().getFirst();
 
         Post post = postRepository.findAll().getFirst();
 
         CommentEntity comment = commentCreateService.createComment(post.getId(), "content", member.getId());
 
-        CommentUpdateRequest request = CommentUpdateRequest.builder().id(comment.getId()).content("update").build();
+        commentDeleteService.delete(comment.getId(), member.getId());
 
-        commentUpdateService.update(request, member.getId());
-
-        CommentEntity updated = commentRepository.findById(comment.getId()).orElseThrow();
-
-
-        assertEquals("update", updated.getContent());
-        assertEquals(comment.getId(), updated.getId());
+        assertNull(commentRepository.findById(comment.getId()).orElse(null));
 
     }
 
     @Test
     @Transactional
     void notFound() {
-
-        CommentUpdateRequest request = CommentUpdateRequest.builder().id(1L).content("update").build();
-
-        assertThrows(NoSuchElementException.class, () -> commentUpdateService.update(request, 2L));
+        Member member = memberRepository.findAll().getFirst();
+        assertThrows(NoSuchElementException.class, () -> commentDeleteService.delete(1L, member.getId()));
     }
 
     @Test
@@ -103,9 +99,7 @@ class CommentUpdateServiceTest {
 
         SignupDTO dto = SignupDTO.builder().provider(Member.Provider.KAKAO).providerId("12345").build();
         Member anotherMember = signupService.signup(dto);
-        CommentUpdateRequest request = CommentUpdateRequest.builder().id(comment.getId()).content("update").build();
-        assertThrows(UnauthorizedAccessException.class, () -> commentUpdateService.update(request, anotherMember.getId()));
 
-
+        assertThrows(UnauthorizedAccessException.class, () -> commentDeleteService.delete(comment.getId(), anotherMember.getId()));
     }
 }

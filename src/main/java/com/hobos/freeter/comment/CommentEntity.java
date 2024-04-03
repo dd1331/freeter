@@ -50,4 +50,8 @@ public class CommentEntity {
     public void update(String content) {
         this.content = content;
     }
+
+    boolean isCommenter(Long memberId) {
+        return this.commenter.getId().equals(memberId);
+    }
 }

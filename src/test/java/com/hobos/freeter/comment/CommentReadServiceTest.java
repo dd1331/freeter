@@ -60,11 +60,11 @@ class CommentReadServiceTest {
 
         PostCreateRequest request = PostCreateRequest.builder().title("title").content("content").categoryId(categoryId).build();
 
-        Post post = postCreateService.create(member.getMemberId(), request);
+        Post post = postCreateService.create(member.getId(), request);
 
 
-        commentCreateService.createComment(post.getId(), "content", member.getMemberId());
-        commentCreateService.createComment(post.getId(), "content2", member.getMemberId());
+        commentCreateService.createComment(post.getId(), "content", member.getId());
+        commentCreateService.createComment(post.getId(), "content2", member.getId());
     }
 
     @Transactional
