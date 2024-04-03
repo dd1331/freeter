@@ -31,6 +31,10 @@ public class Member implements UserDetails {
 
     private Provider provider;
 
+    private String name;
+
+    private String profileImg;
+
     @CreationTimestamp
     private LocalDateTime createdAt;
 
@@ -93,6 +97,8 @@ public class Member implements UserDetails {
         // TODO: 불변객체로?
         this.providerId = dto.getProviderId();
         this.provider = dto.getProvider();
+        this.name = dto.getName();
+        this.profileImg = dto.getProfileImg();
 
     }
 }

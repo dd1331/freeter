@@ -18,6 +18,7 @@ import org.springframework.data.domain.Pageable;
 import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.List;
+import java.util.Optional;
 
 @SpringBootTest
 class CommentReadServiceTest {
@@ -52,7 +53,7 @@ class CommentReadServiceTest {
         entityManager.persist(categoryB);
 
 
-        SignupDTO dto = SignupDTO.builder().provider(Member.Provider.KAKAO).providerId("1234").build();
+        SignupDTO dto = SignupDTO.builder().provider(Member.Provider.KAKAO).providerId("1234").name("name").profileImg("test").build();
         Member member = signupService.signup(dto);
 
         Long categoryId = entityManager.createQuery("SELECT c FROM Category c", Category.class)
@@ -70,14 +71,18 @@ class CommentReadServiceTest {
     @Transactional
     @Test
     void getComments() {
-
         Post post = entityManager.find(Post.class, 1L);
         Pageable pageable = PageRequest.of(0, 5);
         CommentListRequest listDto = CommentListRequest.builder().postId(post.getId()).build();
-        List<CommentEntity> comments = commentReadService.getPostComments(pageable, listDto);
-        assertEquals(2, comments.size());
+        List<CommentResponse> comments = commentReadService.getPostComments(pageable, listDto, Optional.empty());
         System.out.println(comments.getFirst());
-
-
+        assertEquals(2, comments.size());
+        assertEquals("name", comments.getFirst().getName());
+        assertEquals("test", comments.getFirst().profileImg);
+        assertNotNull(comments.getFirst().getCreatedAt());
+        assertNotNull(comments.getFirst().getUpdatedAt());
+        assertNotNull(comments.getFirst().getId());
+        assertNotNull(comments.getFirst().getContent());
+        assertNotNull(comments.getFirst().getIsMine());
     }
 }

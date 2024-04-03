@@ -8,6 +8,7 @@ import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.LocalDateTime;
+import java.util.Optional;
 
 @Getter
 @Entity
@@ -51,7 +52,8 @@ public class CommentEntity {
         this.content = content;
     }
 
-    boolean isCommenter(Long memberId) {
-        return this.commenter.getId().equals(memberId);
+    boolean isMine(Optional<Long> memberId) {
+        if (memberId.isEmpty()) return false;
+        return commenter.getId().equals(memberId);
     }
 }

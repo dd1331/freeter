@@ -20,6 +20,10 @@ public class SignupDTO {
     @NotNull(message = "provider는 필수 입력값입니다.")
     private Member.Provider provider;
 
+    private String name;
+
+    private String profileImg;
+
 //    public enum Provider {
 //        GOOGLE,
 //        FACEBOOK,

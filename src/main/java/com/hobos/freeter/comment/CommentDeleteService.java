@@ -4,6 +4,8 @@ import com.hobos.freeter.member.UnauthorizedAccessException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
+
 @Service
 @RequiredArgsConstructor
 public class CommentDeleteService {
@@ -13,7 +15,7 @@ public class CommentDeleteService {
         CommentEntity found = commentRepository.findById(id)
                 .orElseThrow();
 
-        if (!found.isCommenter(memberId)) throw new UnauthorizedAccessException("권한이 없습니다");
+        if (!found.isMine(Optional.of(memberId))) throw new UnauthorizedAccessException("권한이 없습니다");
 
         commentRepository.deleteById(id);
     }
