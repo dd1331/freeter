@@ -36,6 +36,9 @@ class CommentCreateServiceTest {
     @Autowired
     private CommentCreateService commentCreateService;
 
+    @Autowired
+    private CommentRepository commentRepository;
+
     @BeforeEach
     public void beforeAll() {
         Category categoryA = Category.builder().name("aa").build();
@@ -74,5 +77,21 @@ class CommentCreateServiceTest {
         assertEquals(comment.getCommenter().getId(), member.getId());
         assertEquals(post.getId(), comment.getPost().getId());
 
+    }
+
+    @Test
+    @Transactional
+    void createChildComment() {
+
+        Member member = memberRepository.findAll().getFirst();
+        Post post = postRepository.findAll().getFirst();
+        CommentEntity comment = commentCreateService.createComment(post.getId(), "content", member.getId());
+
+        commentCreateService.addComment(comment.getId(), "child content", member.getId());
+
+        CommentEntity childComment = commentRepository.findByParentId(comment.getId()).getFirst();
+
+        assertEquals(childComment.getContent(), "child content");
+        assertEquals(childComment.getParent().getId(), comment.getId());
     }
 }

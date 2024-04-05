@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.ToString;
 
 import java.time.LocalDateTime;
+import java.util.Optional;
 
 @Builder
 @Getter
@@ -17,4 +18,5 @@ public class CommentResponse {
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
     private Boolean isMine;
+    private Optional<Long> parentId;
 }

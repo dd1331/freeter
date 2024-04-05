@@ -34,4 +34,17 @@ public class CommentCreateService {
 
         return post.getComments().getLast();
     }
+
+    public void addComment(Long parentId, String content, Long memberId) {
+        CommentEntity parent = commentRepository.findById(parentId).orElseThrow(() -> new IllegalArgumentException("부모 댓글을 찾을 수 없습니다."));
+
+        Member commenter = memberRepository.findById(memberId)
+                .orElseThrow(MemberNotFoundException::new);
+
+        CommentEntity comment = CommentEntity.builder().content(content).parent(parent).post(parent.getPost()).commenter(commenter).build();
+        parent.addComment(comment);
+        commentRepository.save(comment);
+
+    }
+
 }

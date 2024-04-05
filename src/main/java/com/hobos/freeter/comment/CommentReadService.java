@@ -26,9 +26,15 @@ public class CommentReadService {
                         .createdAt(comment.getCreatedAt())
                         .updatedAt(comment.getUpdatedAt())
                         .isMine(comment.isMine(memberId))
-
+                        .parentId(Optional.ofNullable(comment.getParent())
+                                .map(CommentEntity::getId))
                         .build())
                 .collect(Collectors.toList());
 
+    }
+
+    public List<CommentResponse> getChildComments(Pageable pageable, ChildCommentListRequest dto, Optional<Long> memberId) {
+        CommentListRequest request = new CommentListRequest(dto.postId);
+        return getPostComments(pageable, request, memberId);
     }
 }

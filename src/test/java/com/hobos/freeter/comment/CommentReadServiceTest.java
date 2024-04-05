@@ -85,4 +85,24 @@ class CommentReadServiceTest {
         assertNotNull(comments.getFirst().getContent());
         assertNotNull(comments.getFirst().getIsMine());
     }
+
+    @Transactional
+    @Test
+    void getChildComments() {
+        Post post = entityManager.find(Post.class, 1L);
+        Pageable pageable = PageRequest.of(0, 5);
+        ChildCommentListRequest listDto = ChildCommentListRequest.builder().postId(post.getId()).parentId(1L).build();
+        List<CommentResponse> comments = commentReadService.getChildComments(pageable, listDto, Optional.empty());
+        assertTrue(comments.stream().map(
+                        r -> {
+                            System.out.println(r.getParentId());
+
+                            return r.getParentId();
+                        }
+//                CommentResponse::getParentId
+                )
+                .anyMatch(s -> s.equals(1L)));
+
+
+    }
 }
