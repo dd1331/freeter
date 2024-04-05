@@ -82,7 +82,7 @@ class CommentLikeServiceTest {
         Long memberId = commentRepository.findAll().getFirst().getCommenter().getId();
         System.out.println(comment.getId());
 
-        commentLikeService.likeComment(comment.getId(), memberId);
+        commentLikeService.like(comment.getId(), memberId);
 
         CommentLike like = commentLikeRepository.findById(comment.getId()).orElseThrow();
         CommentEntity likedComment = commentRepository.findAll().getFirst();
@@ -97,9 +97,9 @@ class CommentLikeServiceTest {
 
         CommentEntity comment = commentRepository.findAll().getFirst();
         Long memberId = commentRepository.findAll().getFirst().getCommenter().getId();
-        commentLikeService.likeComment(comment.getId(), memberId);
+        commentLikeService.like(comment.getId(), memberId);
         boolean liked = !commentLikeRepository.findAll().isEmpty();
-        commentLikeService.unlikeComment(comment.getId(), memberId);
+        commentLikeService.unlike(comment.getId(), memberId);
 
         CommentEntity unLikedComment = commentRepository.findAll().getFirst();
         boolean unLiked = commentLikeRepository.findAll().isEmpty();
@@ -107,5 +107,21 @@ class CommentLikeServiceTest {
         assertEquals(0, unLikedComment.getLikeCount());
         assertTrue(liked);
         assertTrue(unLiked);
+    }
+
+
+    @Test
+    @Transactional
+    void unlikeByLiked() {
+
+
+        CommentEntity comment = commentRepository.findAll().getFirst();
+        Long memberId = commentRepository.findAll().getFirst().getCommenter().getId();
+        commentLikeService.like(comment.getId(), memberId);
+        commentLikeService.like(comment.getId(), memberId);
+
+        CommentEntity unLikedComment = commentRepository.findAll().getFirst();
+
+        assertEquals(0, unLikedComment.getLikeCount());
     }
 }

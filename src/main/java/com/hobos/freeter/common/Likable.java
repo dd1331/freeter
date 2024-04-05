@@ -12,7 +12,8 @@ public abstract class Likable {
     }
 
     public void decreaseLikeCount() {
-
+        System.out.println(likeCount);
         likeCount -= 1;
+        System.out.println(likeCount);
     }
 }

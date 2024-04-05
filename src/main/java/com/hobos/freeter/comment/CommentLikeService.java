@@ -1,5 +1,6 @@
 package com.hobos.freeter.comment;
 
+import com.hobos.freeter.common.LikeService;
 import com.hobos.freeter.member.Member;
 import com.hobos.freeter.member.MemberRepository;
 import lombok.RequiredArgsConstructor;
@@ -7,22 +8,25 @@ import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
-public class CommentLikeService {
+public class CommentLikeService implements LikeService {
 
     private final MemberRepository memberRepository;
     private final CommentRepository commentRepository;
     private final CommentLikeRepository commentLikeRepository;
 
-    public void likeComment(Long commentId, Long memberId) {
+    public void like(Long targetId, Long memberId) {
 
         // 댓글 및 사용자 정보 조회
-        CommentEntity comment = commentRepository.findById(commentId).orElseThrow();
+        CommentEntity comment = commentRepository.findById(targetId).orElseThrow();
         Member member = memberRepository.findById(memberId).orElseThrow();
 
         // 이미 좋아요 누른 경우 처리
-        boolean liked = commentLikeRepository.findByCommentIdAndMemberId(commentId, memberId).isPresent();
+        boolean liked = commentLikeRepository.findByCommentIdAndMemberId(targetId, memberId).isPresent();
 
-        if (liked) unlikeComment(commentId, memberId);
+        if (liked) {
+            unlike(targetId, memberId);
+            return;
+        }
 
 
         // 좋아요 정보 저장
@@ -35,10 +39,10 @@ public class CommentLikeService {
 
     }
 
-    public void unlikeComment(Long commentId, Long memberId) {
+    public void unlike(Long targetId, Long memberId) {
 
         // 좋아요 정보 조회
-        CommentLike commentLike = commentLikeRepository.findByCommentIdAndMemberId(commentId, memberId).orElseThrow();
+        CommentLike commentLike = commentLikeRepository.findByCommentIdAndMemberId(targetId, memberId).orElseThrow();
 
         // 좋아요 정보 삭제
         commentLikeRepository.delete(commentLike);

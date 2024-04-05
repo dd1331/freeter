@@ -1,6 +1,7 @@
 package com.hobos.freeter.post;
 
 import com.hobos.freeter.comment.CommentEntity;
+import com.hobos.freeter.common.Likable;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
@@ -16,7 +17,7 @@ import java.util.List;
 @NoArgsConstructor
 @Entity
 @Getter
-public class Post {
+public class Post extends Likable {
     @Id
     @GeneratedValue()
     private Long id;
