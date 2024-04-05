@@ -16,12 +16,20 @@ import org.springframework.boot.test.context.SpringBootTest;
 import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
-class CommentCreateServiceTest {
+class CommentLikeServiceTest {
+
     @PersistenceContext
     private EntityManager entityManager;
 
     @Autowired
     private PostRepository postRepository;
+
+    @Autowired
+    private CommentRepository commentRepository;
+
+    @Autowired
+    private CommentLikeRepository commentLikeRepository;
+
 
     @Autowired
     private MemberRepository memberRepository;
@@ -37,7 +45,13 @@ class CommentCreateServiceTest {
     private CommentCreateService commentCreateService;
 
     @Autowired
-    private CommentRepository commentRepository;
+    private CommentUpdateService commentUpdateService;
+
+    @Autowired
+    private CommentDeleteService commentDeleteService;
+
+    @Autowired
+    private CommentLikeService commentLikeService;
 
     @BeforeEach
     public void beforeAll() {
@@ -56,43 +70,42 @@ class CommentCreateServiceTest {
 
         PostCreateRequest request = PostCreateRequest.builder().title("title").content("content").categoryId(categoryId).build();
 
-        postCreateService.create(member.getId(), request);
-    }
+        Post post = postCreateService.create(member.getId(), request);
 
-
-    @Test
-    @Transactional
-    void createComment() {
-
-        Member member = memberRepository.findAll().getFirst();
-
-        Post post = postRepository.findAll().getFirst();
-
-        CommentEntity comment = commentCreateService.createComment(post.getId(), "content", member.getId());
-
-
-        System.out.println(comment);
-        assertEquals(0, comment.getLikeCount());
-
-        assertEquals(comment.getContent(), "content");
-        assertEquals(comment.getCommenter().getId(), member.getId());
-        assertEquals(post.getId(), comment.getPost().getId());
-
+        commentCreateService.createComment(post.getId(), "comment", member.getId());
     }
 
     @Test
     @Transactional
-    void createChildComment() {
+    void likeComment() {
+        CommentEntity comment = commentRepository.findAll().getFirst();
+        Long memberId = commentRepository.findAll().getFirst().getCommenter().getId();
+        System.out.println(comment.getId());
 
-        Member member = memberRepository.findAll().getFirst();
-        Post post = postRepository.findAll().getFirst();
-        CommentEntity comment = commentCreateService.createComment(post.getId(), "content", member.getId());
+        commentLikeService.likeComment(comment.getId(), memberId);
 
-        commentCreateService.addComment(comment.getId(), "child content", member.getId());
+        CommentLike like = commentLikeRepository.findById(comment.getId()).orElseThrow();
+        CommentEntity likedComment = commentRepository.findAll().getFirst();
+        assertEquals(1, likedComment.getLikeCount());
+        assertEquals(like.getComment().getId(), comment.getId());
+    }
 
-        CommentEntity childComment = commentRepository.findByParentId(comment.getId()).getFirst();
+    @Test
+    @Transactional
+    void unlikeComment() {
 
-        assertEquals(childComment.getContent(), "child content");
-        assertEquals(childComment.getParent().getId(), comment.getId());
+
+        CommentEntity comment = commentRepository.findAll().getFirst();
+        Long memberId = commentRepository.findAll().getFirst().getCommenter().getId();
+        commentLikeService.likeComment(comment.getId(), memberId);
+        boolean liked = !commentLikeRepository.findAll().isEmpty();
+        commentLikeService.unlikeComment(comment.getId(), memberId);
+
+        CommentEntity unLikedComment = commentRepository.findAll().getFirst();
+        boolean unLiked = commentLikeRepository.findAll().isEmpty();
+
+        assertEquals(0, unLikedComment.getLikeCount());
+        assertTrue(liked);
+        assertTrue(unLiked);
     }
 }

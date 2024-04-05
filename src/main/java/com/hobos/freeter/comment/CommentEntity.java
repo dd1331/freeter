@@ -1,5 +1,6 @@
 package com.hobos.freeter.comment;
 
+import com.hobos.freeter.common.Likable;
 import com.hobos.freeter.member.Member;
 import com.hobos.freeter.post.Post;
 import jakarta.persistence.*;
@@ -18,7 +19,7 @@ import java.util.Optional;
 @ToString
 @NoArgsConstructor
 @AllArgsConstructor
-public class CommentEntity {
+public class CommentEntity extends Likable {
     @Id
     @GeneratedValue()
     private Long id;
@@ -26,10 +27,6 @@ public class CommentEntity {
     @ManyToOne
     @JoinColumn(name = "commenter_id")
     private Member commenter;
-
-//    @Column(name = "post_id")
-//    private Long postId;
-
 
     @ManyToOne
     @JoinColumn(name = "post_id")
@@ -63,12 +60,12 @@ public class CommentEntity {
     }
 
     boolean isMine(Optional<Long> memberId) {
-        if (memberId.isEmpty()) return false;
-        return commenter.getId().equals(memberId);
+        return memberId.map(commenter.getId()::equals).orElse(false);
     }
 
     void addComment(CommentEntity comment) {
         comment.parent = this;
         replies.add(comment);
     }
+
 }
