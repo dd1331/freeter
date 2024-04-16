@@ -52,7 +52,7 @@ class PostCreateServiceTest {
         Post post = postCreateService.create(member.getId(), request);
 
         assertEquals(categories.getFirst().getId(), post.getPostCategories().getFirst().getCategory().getId());
-        assertEquals(post.getPosterId(), member.getId());
+        assertEquals(post.getPoster().getId(), member.getId());
     }
 }
 

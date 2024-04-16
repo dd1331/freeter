@@ -2,10 +2,11 @@ package com.hobos.freeter.post;
 
 import com.hobos.freeter.comment.CommentEntity;
 import com.hobos.freeter.common.Likable;
+import com.hobos.freeter.member.Member;
 import jakarta.persistence.*;
+import jakarta.persistence.CascadeType;
 import lombok.*;
-import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.UpdateTimestamp;
+import org.hibernate.annotations.*;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -28,8 +29,13 @@ public class Post extends Likable {
     @Column()
     private String content;
 
-    @Column()
-    private Long posterId;
+    //    @Column()
+//    private Long posterId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "poster_id")
+    private Member poster;
+
+    private int commentCount;
 
     @CreationTimestamp
     private LocalDateTime createdAt;
@@ -58,6 +64,7 @@ public class Post extends Likable {
     }
 
     public void addComment(CommentEntity comment) {
+        onCommentAdded();
         comments.add(comment);
         comment.addToPost(this);
     }
@@ -71,6 +78,14 @@ public class Post extends Likable {
 
     public void delete() {
         this.deletedAt = LocalDateTime.now();
+    }
+
+    public void onCommentDeleted() {
+        this.commentCount--;
+    }
+
+    public void onCommentAdded() {
+        this.commentCount++;
     }
 }
 

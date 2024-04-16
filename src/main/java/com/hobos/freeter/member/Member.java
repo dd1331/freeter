@@ -1,5 +1,6 @@
 package com.hobos.freeter.member;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
@@ -27,10 +28,13 @@ public class Member implements UserDetails {
     @GeneratedValue()
     private Long id;
 
+    @Column(nullable = false)
     private String providerId;
 
+    @Column(nullable = false)
     private Provider provider;
 
+    @Column(nullable = false)
     private String name;
 
     private String profileImg;

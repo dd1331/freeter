@@ -62,14 +62,14 @@ class PostLikeServiceTest {
     @Transactional
     void like() {
         Post post = postRepository.findAll().getFirst();
-        Long memberId = postRepository.findAll().getFirst().getPosterId();
+        Long memberId = postRepository.findAll().getFirst().getPoster().getId();
 
         postLikeService.like(post.getId(), memberId);
 
         PostLike like = postLikeRepository.findById(post.getId()).orElseThrow();
         Post likedPost = postRepository.findAll().getFirst();
         assertEquals(1, likedPost.getLikeCount());
-        assertEquals(like.getPost().getPosterId(), post.getId());
+        assertEquals(like.getPost().getPoster().getId(), post.getId());
     }
 
     @Test
@@ -77,7 +77,7 @@ class PostLikeServiceTest {
     void unlike() {
 
         Post post = postRepository.findAll().getFirst();
-        Long memberId = postRepository.findAll().getFirst().getPosterId();
+        Long memberId = postRepository.findAll().getFirst().getPoster().getId();
         postLikeService.like(post.getId(), memberId);
         boolean liked = !postLikeRepository.findAll().isEmpty();
         postLikeService.unlike(post.getId(), memberId);
@@ -95,7 +95,7 @@ class PostLikeServiceTest {
     void unlikeByLiked() {
 
         Post post = postRepository.findAll().getFirst();
-        Long memberId = postRepository.findAll().getFirst().getPosterId();
+        Long memberId = postRepository.findAll().getFirst().getPoster().getId();
         postLikeService.like(post.getId(), memberId);
         postLikeService.like(post.getId(), memberId);
 

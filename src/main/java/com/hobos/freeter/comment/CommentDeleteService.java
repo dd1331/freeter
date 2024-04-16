@@ -17,7 +17,9 @@ public class CommentDeleteService {
 
         if (!found.isMine(Optional.of(memberId))) throw new UnauthorizedAccessException("권한이 없습니다");
 
-        commentRepository.deleteById(id);
+
+        found.delete();
+
     }
 
 }

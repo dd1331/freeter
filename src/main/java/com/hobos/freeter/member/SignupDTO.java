@@ -20,6 +20,8 @@ public class SignupDTO {
     @NotNull(message = "provider는 필수 입력값입니다.")
     private Member.Provider provider;
 
+
+    @NotNull
     private String name;
 
     private String profileImg;

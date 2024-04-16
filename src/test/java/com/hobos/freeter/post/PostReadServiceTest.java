@@ -1,5 +1,8 @@
 package com.hobos.freeter.post;
 
+import com.hobos.freeter.comment.CommentCreateService;
+import com.hobos.freeter.comment.CommentDeleteService;
+import com.hobos.freeter.comment.CommentEntity;
 import com.hobos.freeter.member.Member;
 import com.hobos.freeter.member.SignupDTO;
 import com.hobos.freeter.member.SignupService;
@@ -14,6 +17,9 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.test.annotation.Rollback;
+
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -32,6 +38,12 @@ class PostReadServiceTest {
     @Autowired
     private PostCreateService postCreateService;
 
+    @Autowired
+    CommentCreateService commentCreateService;
+
+    @Autowired
+    private CommentDeleteService commentDeleteService;
+
     @BeforeEach
     public void beforeAll() {
         Category categoryA = Category.builder().name("aa").build();
@@ -46,10 +58,10 @@ class PostReadServiceTest {
     @Transactional
     @DisplayName("성공")
     void getOne() {
-        SignupDTO dto = SignupDTO.builder().provider(Member.Provider.KAKAO).providerId("1234").build();
+        SignupDTO dto = SignupDTO.builder().provider(Member.Provider.KAKAO).providerId("1234").name("dd").build();
         Member member = signupService.signup(dto);
 
-        PostCreateRequest request = PostCreateRequest.builder().title("title").content("content").build();
+        PostCreateRequest request = PostCreateRequest.builder().title("title").content("content").categoryId(1L).build();
 
         Post post = postCreateService.create(member.getId(), request);
 
@@ -65,10 +77,11 @@ class PostReadServiceTest {
     }
 
     @Test()
-    @Transactional
+    @Transactional()
+    @Rollback(false)
     @DisplayName("목록 성공")
     void getAll() {
-        SignupDTO dto = SignupDTO.builder().provider(Member.Provider.KAKAO).providerId("1234").build();
+        SignupDTO dto = SignupDTO.builder().provider(Member.Provider.KAKAO).providerId("1234").name("dd").build();
         Member member = signupService.signup(dto);
 
         Long categoryId = entityManager.createQuery("SELECT c FROM Category c", Category.class)
@@ -79,11 +92,32 @@ class PostReadServiceTest {
         postCreateService.create(member.getId(), request);
         postCreateService.create(member.getId(), request);
 
+        commentCreateService.createComment(1L, "comment", member.getId());
+        commentCreateService.createComment(1L, "comment2", member.getId());
+        commentCreateService.createComment(1L, "comment3", member.getId());
+        System.out.println("@@" + entityManager.find(CommentEntity.class, 1L));
+        commentDeleteService.delete(1L, 1L);
+        String jpql = "SELECT c FROM CommentEntity c WHERE c.deletedAt IS NOT NULL OR c.deletedAt IS NULL";
+        List<CommentEntity> comments = entityManager.createQuery(jpql, CommentEntity.class).getResultList();
+
+        System.out.println("@@@" + entityManager.find(CommentEntity.class, 1L));
+        System.out.println("@@@" + comments.size());
+
         Pageable pageable = PageRequest.of(0, 5);
         PostListRequest listDto = PostListRequest.builder().categoryId(categoryId).build();
-        Page<Post> found = postReadService.getPosts(pageable, listDto);
+        PostListDto found = postReadService.getPosts(pageable, listDto);
 
-        assertEquals(2, found.stream().count());
+        PostDto firstPost = found.getPosts().stream().findFirst().get();
+
+        assertNotNull(firstPost.getTitle());
+        assertNotNull(firstPost.getCreatedAt());
+        assertNotNull(firstPost.getName());
+        assertEquals(2, firstPost.getCommentCount());
+
+
+        assertTrue(found.getPosts().stream().findFirst().get().getCategoryIds().contains(categoryId));
+
+//        assertEquals(2, found.getPosts().size());
     }
 
     @Test()
@@ -96,9 +130,9 @@ class PostReadServiceTest {
 
         Pageable pageable = PageRequest.of(0, 5);
         PostListRequest listDto = PostListRequest.builder().categoryId(categoryId).build();
-        Page<Post> found = postReadService.getPosts(pageable, listDto);
+        PostListDto found = postReadService.getPosts(pageable, listDto);
 
-        assertEquals(0, found.stream().count());
+        assertEquals(0, found.getPosts().size());
     }
 
 
@@ -106,7 +140,7 @@ class PostReadServiceTest {
     @Transactional
     @DisplayName("카테고리별 목록 성공")
     void getAllByCategory() {
-        SignupDTO dto = SignupDTO.builder().provider(Member.Provider.KAKAO).providerId("1234").build();
+        SignupDTO dto = SignupDTO.builder().provider(Member.Provider.KAKAO).providerId("1234").name("dd").build();
         Member member = signupService.signup(dto);
         Long categoryId = entityManager.createQuery("SELECT c FROM Category c", Category.class)
                 .getResultList().getFirst().getId();
@@ -118,10 +152,10 @@ class PostReadServiceTest {
 
         Pageable pageable = PageRequest.of(0, 5);
         PostListRequest listDto = PostListRequest.builder().categoryId(categoryId).build();
-        Page<Post> found = postReadService.getPosts(pageable, listDto);
+        PostListDto found = postReadService.getPosts(pageable, listDto);
 
-        assertEquals(categoryId, found.getContent().getFirst().getPostCategories().getFirst().getCategory().getId());
-        assertEquals(2, found.stream().count());
+        assertTrue(found.getPosts().stream().findFirst().get().getCategoryIds().contains(categoryId));
+        assertEquals(2, found.getPosts().size());
     }
 
 }

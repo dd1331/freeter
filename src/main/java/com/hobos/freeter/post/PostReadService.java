@@ -19,9 +19,11 @@ public class PostReadService {
         return found;
     }
 
-    public Page<Post> getPosts(Pageable pageable, PostListRequest dto) {
+    public PostListDto getPosts(Pageable pageable, PostListRequest dto) {
+        Page<Post> posts = postRepository.findByPostCategoriesCategoryIdAndCommentsDeletedAtIsNull(dto.getCategoryId(), pageable);
+
+        return new PostListDto(posts);
 
 
-        return postRepository.findByPostCategoriesCategoryId(dto.getCategoryId(), pageable);
     }
 }

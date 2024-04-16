@@ -19,6 +19,7 @@ import java.util.Optional;
 @ToString
 @NoArgsConstructor
 @AllArgsConstructor
+@Table(name = "comment")
 public class CommentEntity extends Likable {
     @Id
     @GeneratedValue()
@@ -28,13 +29,13 @@ public class CommentEntity extends Likable {
     @JoinColumn(name = "commenter_id")
     private Member commenter;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "post_id")
     private Post post;
 
     private String content;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "parent_id")
     private CommentEntity parent;
 
@@ -65,7 +66,14 @@ public class CommentEntity extends Likable {
 
     void addComment(CommentEntity comment) {
         comment.parent = this;
+        post.onCommentAdded();
         replies.add(comment);
+    }
+
+    void delete() {
+
+        this.post.onCommentDeleted();
+        this.deletedAt = LocalDateTime.now();
     }
 
 }
