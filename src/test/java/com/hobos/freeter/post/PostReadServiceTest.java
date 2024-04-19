@@ -44,6 +44,9 @@ class PostReadServiceTest {
     @Autowired
     private CommentDeleteService commentDeleteService;
 
+    @Autowired
+    private PostLikeService postLikeService;
+
     @BeforeEach
     public void beforeAll() {
         Category categoryA = Category.builder().name("aa").build();
@@ -92,16 +95,13 @@ class PostReadServiceTest {
         postCreateService.create(member.getId(), request);
         postCreateService.create(member.getId(), request);
 
+        postLikeService.like(1L, member.getId());
+
         commentCreateService.createComment(1L, "comment", member.getId());
         commentCreateService.createComment(1L, "comment2", member.getId());
         commentCreateService.createComment(1L, "comment3", member.getId());
-        System.out.println("@@" + entityManager.find(CommentEntity.class, 1L));
         commentDeleteService.delete(1L, 1L);
-        String jpql = "SELECT c FROM CommentEntity c WHERE c.deletedAt IS NOT NULL OR c.deletedAt IS NULL";
-        List<CommentEntity> comments = entityManager.createQuery(jpql, CommentEntity.class).getResultList();
 
-        System.out.println("@@@" + entityManager.find(CommentEntity.class, 1L));
-        System.out.println("@@@" + comments.size());
 
         Pageable pageable = PageRequest.of(0, 5);
         PostListRequest listDto = PostListRequest.builder().categoryId(categoryId).build();
@@ -111,6 +111,7 @@ class PostReadServiceTest {
 
         assertNotNull(firstPost.getTitle());
         assertNotNull(firstPost.getCreatedAt());
+        assertEquals(1, firstPost.getLikeCount());
         assertNotNull(firstPost.getName());
         assertEquals(2, firstPost.getCommentCount());
 

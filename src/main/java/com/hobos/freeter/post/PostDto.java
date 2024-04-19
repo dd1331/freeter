@@ -25,6 +25,8 @@ public class PostDto {
 
     private int commentCount;
 
+    private int likeCount;
+
     private List<Long> categoryIds;
 
     private LocalDateTime createdAt;
@@ -40,5 +42,6 @@ public class PostDto {
         this.commentCount = post.getCommentCount();
         this.createdAt = post.getCreatedAt();
         this.updatedAt = post.getUpdatedAt();
+        this.likeCount = post.getLikeCount();
     }
 }

@@ -1,8 +1,10 @@
 package com.hobos.freeter.common;
 
+import jakarta.persistence.MappedSuperclass;
 import lombok.Getter;
 
 @Getter
+@MappedSuperclass
 public abstract class Likable {
     private int likeCount;
 
