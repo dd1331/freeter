@@ -1,19 +1,17 @@
 package com.hobos.freeter.post;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import jakarta.persistence.*;
+import lombok.*;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Builder
 @AllArgsConstructor
 @Getter
 @NoArgsConstructor
+@ToString(exclude = {"parent", "children"})
 public class Category {
 
     @Id
@@ -22,5 +20,21 @@ public class Category {
 
     private String name;
 
-    // constructors, getters, and setters
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "parent_id")
+    private Category parent;
+
+    @OneToMany(mappedBy = "parent", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @Builder.Default
+    private List<Category> children = new ArrayList<>();
+
+    public void addChildren(Category child) {
+        this.children.add(child);
+        child.registerParent(this);
+    }
+
+    void registerParent(Category category) {
+        this.parent = category;
+
+    }
 }
